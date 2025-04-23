@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Food Ordering website</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+
+    button {
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    input[type='number'] {
+      width: 60px;
+    }
+
+    .menu-item {
+      margin: 10px 0;
+    }
+
+    #order-section, #payment-section {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to Swiggy</h1>
+
+    <div id="hotel-section">
+      <p>Select a Hotel:</p>
+      <button onclick="showMenu('Buhari')">1. Buhari Hotel</button>
+      <button onclick="showMenu('A2B')">2. A2B</button>
+      <button onclick="alert('Amma Canteen not available yet!')">3. Amma Canteen</button>
+    </div>
+
+    <div id="menu-section"></div>
+    <div id="order-section"></div>
+    <div id="payment-section"></div>
+  </div>
+
+  <script>
+    const menus = {
+      Buhari: [
+        { id: 1, name: "Fried Rice", price: 150 },
+        { id: 2, name: "Noodles", price: 120 },
+        { id: 3, name: "Shawarma", price: 180 }
+      ],
+      A2B: [
+        { id: 1, name: "Parotta", price: 30 },
+        { id: 2, name: "Paneer Masala", price: 140 },
+        { id: 3, name: "Chappathi", price: 60 }
+      ]
+    };
+
+    let currentHotel = '';
+    let selectedItem = null;
+    let totalPrice = 0;
+
+    function showMenu(hotel) {
+      currentHotel = hotel;
+      const menu = menus[hotel];
+      let html = `<h3>${hotel} Menu</h3>`;
+
+      menu.forEach((item, index) => {
+        html += `
+          <div class="menu-item">
+            ${item.id}. ${item.name} - ₹${item.price}
+            <input type="radio" name="food" value="${index}">
+          </div>`;
+      });
+
+      html += `<br><label>Enter Quantity: </label>
+               <input type="number" id="qty" value="1" min="1"><br><br>
+               <button onclick="placeOrder()">Place Order</button>`;
+      document.getElementById("menu-section").innerHTML = html;
+    }
+
+    function placeOrder() {
+      const selectedIndex = document.querySelector('input[name="food"]:checked');
+      const qty = parseInt(document.getElementById("qty").value);
+      if (!selectedIndex) {
+        alert("Please select a food item.");
+        return;
+      }
+
+      const item = menus[currentHotel][selectedIndex.value];
+      totalPrice = item.price * qty;
+
+      document.getElementById("order-section").innerHTML = `
+        <h3>Order Summary</h3>
+        <p>Item: ${item.name}</p>
+        <p>Quantity: ${qty}</p>
+        <p>Total: ₹${totalPrice}</p>
+        <button onclick="makePayment()">Pay Now</button>
+      `;
+    }
+
+    function makePayment() {
+      const otp = Math.floor(1000 + Math.random() * 9000);
+      const userOtp = prompt("Your OTP is: " + otp + "\nPlease enter the OTP to complete payment:");
+
+      if (parseInt(userOtp) === otp) {
+        document.getElementById("payment-section").innerHTML = `
+          <h3>✅ Payment Successful!</h3>
+          <p>Your order has been placed. Thank you!</p>`;
+      } else {
+        document.getElementById("payment-section").innerHTML = `
+          <h3>❌ Payment Failed!</h3>
+          <p>OTP does not match. Please try again.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
